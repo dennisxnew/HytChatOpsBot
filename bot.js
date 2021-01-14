@@ -14,8 +14,17 @@ const AdaptiveCard = require("./resources/adaptiveCard.json");
 const ShowLogCard = require("./resources/ShowLogCard.json");
 
 class EmptyBot extends ActivityHandler {
-    constructor() {
+    constructor(conversationState, userState, dialog) {
         super();
+        if (!conversationState) throw new Error('[DialogBot]: Missing parameter. conversationState is required');
+        if (!userState) throw new Error('[DialogBot]: Missing parameter. userState is required');
+        if (!dialog) throw new Error('[DialogBot]: Missing parameter. dialog is required');
+
+        this.conversationState = conversationState;
+        this.userState = userState;
+        this.dialog = dialog;
+        this.dialogState = this.conversationState.createProperty('DialogState');
+
         this.onMembersAdded(async (context, next) => {
             const membersAdded = context.activity.membersAdded;
             for (let cnt = 0; cnt < membersAdded.length; ++cnt) {
@@ -31,7 +40,8 @@ class EmptyBot extends ActivityHandler {
 
         this.onMessage(async (context, next) => {
             const input = context.activity.text;
-
+            console.log(context.activity);
+            // await this.dialog.run(context, this.dialogState);
             switch (input) {
                 case "#h":
                     const reply = MessageFactory.text(`您輸入了 ${input}`);
@@ -40,7 +50,6 @@ class EmptyBot extends ActivityHandler {
                         attachments: [this.createHeroCard()],
                     });
                     break;
-                case "#servers":
                 case "#Servers":
                     let serverCards = await axios.get(
                         "http://localhost:8080/demo/getServerCards"
@@ -90,20 +99,26 @@ class EmptyBot extends ActivityHandler {
                         attachments: [this.createShowLogCard()],
                     });
                     break;
+                case "#d":
+                    await this.dialog.run(context, this.dialogState);
+                    break;
                 case "#heroCard":
                     await context.sendActivity({
                         attachments: [this.createHeroCard()],
                     });
                     break;
-                default:
-                    await context.sendActivity(
-                        "請輸入正確指令，可透過「#Help」查詢"
-                    );
-                    break;
             }
 
             await next();
         });
+    }
+
+    async run(context) {
+        await super.run(context);
+
+        // Save any state changes. The load happened during the execution of the Dialog.
+        await this.conversationState.saveChanges(context, false);
+        await this.userState.saveChanges(context, false);
     }
 
     helpCard() {
