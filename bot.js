@@ -6,6 +6,7 @@ const { ActionTypes } = require('botframework-schema');
 const axios = require('axios');
 
 const AdaptiveCard = require('./resources/adaptiveCard.json');
+const ShowLogCard = require('./resources/ShowLogCard.json');
 
 class EmptyBot extends ActivityHandler {
     constructor() {
@@ -22,37 +23,43 @@ class EmptyBot extends ActivityHandler {
         });
 
         this.onMessage(async (context, next) => {
-            const text = context.activity.text;
+            const input = context.activity.text;
 
-            // If the `text` is in the Array, a valid color was selected and send agreement.
-            if (text === '#h') {
-                const reply = MessageFactory.text(`您輸入了 ${ text }`);
-                await context.sendActivity(reply);
-                await context.sendActivity({ attachments: [this.helpCard()] });
-            } else if(text === '#api'){
-                const response = await axios.get('http://demochatops.azurewebsites.net/demo/getTestMessage');
-                const { data } = response;
-                await context.sendActivity('API Result: ' + data.message);
-            } else if(text === "#cards"){
-                await context.sendActivity({ attachments: [this.createAdaptiveCard(), 
-                                                           this.createThumbnailCard(), 
-                                                           this.createThumbnailCard()], 
-                                                           attachmentLayout: AttachmentLayoutTypes.Carousel });
-            } else if(text === "#cards2"){
-                await context.sendActivity({ attachments: [this.createThumbnailCard(), 
-                                                           this.createThumbnailCard(), 
-                                                           this.createThumbnailCard()], 
-                                                           attachmentLayout: AttachmentLayoutTypes.Carousel });
-            } else if(text === "#ask"){
-                await this.sendSuggestedActions(context);
-            } else{
-                await context.sendActivity('請輸入正確指令，可透過「#Help」查詢');                
+            switch(input){
+                case '#h':
+                    const reply = MessageFactory.text(`您輸入了 ${ input }`);
+                    await context.sendActivity(reply);
+                    await context.sendActivity({ attachments: [this.createHeroCard()] });
+                    break;
+                case '#api':
+                    const response = await axios.get('http://demochatops.azurewebsites.net/demo/getTestMessage');
+                    const { data } = response;
+                    await context.sendActivity('API Result: ' + data.message);
+                    break;
+                case "#cards":
+                    await context.sendActivity({ attachments: [this.createAdaptiveCard(), 
+                                                               this.createThumbnailCard(), 
+                                                               this.createThumbnailCard()], 
+                                                               attachmentLayout: AttachmentLayoutTypes.Carousel });
+                    break;
+                case "#cards2":
+                    await context.sendActivity({ attachments: [this.createThumbnailCard(), 
+                                                               this.createThumbnailCard(), 
+                                                               this.createThumbnailCard()], 
+                                                               attachmentLayout: AttachmentLayoutTypes.Carousel });
+                    break;
+                case "#ShowLog":
+                    await context.sendActivity({ attachments: [this.createShowLogCard()] });
+                    break;
+                case "#heroCard":
+                    await context.sendActivity({ attachments: [this.createHeroCard()] });
+                    break;
+                default:
+                    await context.sendActivity('請輸入正確指令，可透過「#Help」查詢');  
+                    break;
+
             }
-
-            // After the bot has responded send the suggested actions.
-            // await this.sendSuggestedActions(context);
-
-            // By calling next() you ensure that the next BotHandler is run.
+            
             await next();
         });
 
@@ -65,10 +72,17 @@ class EmptyBot extends ActivityHandler {
                 "$schema": "https://adaptivecards.io/schemas/adaptive-card.json",
                 "type": "AdaptiveCard",
                 "version": "1.0",
+                "body": [
+                  {
+                    "type": "TextBlock",
+                    "text": "請點擊 **下列按鈕** 執行指令"
+                  }
+                ],
                 "actions": [
+                  
                   {
                     "type": "Action.Submit",
-                    "title": "\"#card\"",
+                    "title": "\"#cards\"",
                     "data": {
                         "msteams": {
                             "type": "imBack",
@@ -78,7 +92,7 @@ class EmptyBot extends ActivityHandler {
                   },
                   {
                     "type": "Action.Submit",
-                    "title": "\"#card2\"",
+                    "title": "\"#cards2\"",
                     "data": {
                         "msteams": {
                             "type": "imBack",
@@ -95,16 +109,6 @@ class EmptyBot extends ActivityHandler {
                             "value": "#api"
                         }
                     }
-                  },
-                  {
-                    "type": "Action.Submit",
-                    "title": "\"#ask\"",
-                    "data": {
-                        "msteams": {
-                            "type": "imBack",
-                            "value": "#ask"
-                        }
-                    }
                   }
                 ]
             }
@@ -113,6 +117,44 @@ class EmptyBot extends ActivityHandler {
 
     createAdaptiveCard() {
         return CardFactory.adaptiveCard(AdaptiveCard);
+    }
+
+    createShowLogCard() {
+        return CardFactory.adaptiveCard(ShowLogCard);
+    }
+
+    createHeroCard() {
+        return CardFactory.heroCard(
+            '請點擊下列按鈕執行指令' ,
+            CardFactory.images(['http://demochatops.azurewebsites.net/img/chat-bot.png']),
+            CardFactory.actions([
+                {
+                    type: "imBack",
+                    title: "\"#h\"",
+                    value: "#h"
+                },
+                {
+                    type: "imBack",
+                    title: "\"#cards\"",
+                    value: "#cards"
+                },
+                {
+                    type: "imBack",
+                    title: "\"#cards2\"",
+                    value: "#cards2"
+                },
+                {
+                    type: "imBack",
+                    title: "\"#api\"",
+                    value: "#api"
+                },
+                {
+                    type: "imBack",
+                    title: "\"#ShowLog\"",
+                    value: "#ShowLog"
+                }
+            ])
+        );
     }
 
     createThumbnailCard() {
