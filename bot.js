@@ -59,6 +59,22 @@ class EmptyBot extends ActivityHandler {
                     });
 
                     break;
+                case "#ShowMembers":
+                    const memberCards = await axios.get(
+                        "http://localhost:8080/demo/getMemberCards"
+                    );
+
+                    let memberCardsAttachments = [];
+                    for (let i = 0; i < memberCards.data.length; i++) {
+                        memberCardsAttachments.push(this.createMemberCard(memberCards.data[i]));
+                    }
+
+                    await context.sendActivity({
+                        attachments: memberCardsAttachments,
+                        attachmentLayout: AttachmentLayoutTypes.Carousel,
+                    });
+
+                    break;
                 case "#api":
                     const response = await axios.get(
                         "http://demochatops.azurewebsites.net/demo/getTestMessage"
@@ -189,6 +205,11 @@ class EmptyBot extends ActivityHandler {
                 },
                 {
                     type: "imBack",
+                    title: '"#ShowMembers"',
+                    value: "#ShowMembers",
+                },
+                {
+                    type: "imBack",
                     title: '"#ShowLog"',
                     value: "#ShowLog",
                 },
@@ -228,6 +249,72 @@ class EmptyBot extends ActivityHandler {
             version: "1.0",
             body: [textBlock, factset],
             actions: [],
+        });
+    }
+
+    createMemberCard(memberInfo) {
+        return CardFactory.adaptiveCard({
+            "type": "AdaptiveCard",
+            "body": [
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "Image",
+                                    "url": memberInfo.profileImage,
+                                    "style": "Person",
+                                    "width": "80px",
+                                    "height": "80px"
+                                }
+                            ],
+                            "width": "stretch"
+                        },
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "size": "Large",
+                                    "weight": "Bolder",
+                                    "text": memberInfo.name,
+                                    "wrap": true,
+                                    "horizontalAlignment": "Left"
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "text": memberInfo.enName,
+                                    "wrap": true,
+                                    "horizontalAlignment": "Left"
+                                }
+                            ],
+                            "verticalContentAlignment": "Center",
+                            "width": "stretch"
+                        }
+                    ]
+                },
+                {
+                    "type": "FactSet",
+                    "facts": [
+                        {
+                            "title": "職位",
+                            "value": memberInfo.position
+                        },
+                        {
+                            "title": "電話",
+                            "value": memberInfo.phone
+                        },
+                        {
+                            "title": "E-mail",
+                            "value": memberInfo.Email
+                        }
+                    ]
+                }
+            ],
+            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+            "version": "1.2"
         });
     }
 
