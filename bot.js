@@ -12,6 +12,7 @@ const axios = require("axios");
 
 const AdaptiveCard = require("./resources/adaptiveCard.json");
 const ShowLogCard = require("./resources/ShowLogCard.json");
+const serverCard = require("./resources/serverCard.json");
 
 class EmptyBot extends ActivityHandler {
     constructor() {
@@ -45,16 +46,16 @@ class EmptyBot extends ActivityHandler {
                     let serverCards = await axios.get(
                         "http://localhost:8080/demo/getServerCards"
                     );
-                    
-                    let attachments = [];
+
+                    let serverCardAttachments = [];
                     for (let i = 0; i < serverCards.data.length; i++) {
-                        console.log(serverCards.data[i].textBlock);
-                        console.log(serverCards.data[i].factSet);
-                        attachments.push(this.createServerCard(serverCards.data[i].textBlock, serverCards.data[i].factSet));
+                        serverCardAttachments.push(
+                            this.createServerCard(serverCards.data[i])
+                        );
                     }
 
                     await context.sendActivity({
-                        attachments: attachments,
+                        attachments: serverCardAttachments,
                         attachmentLayout: AttachmentLayoutTypes.Carousel,
                     });
 
@@ -174,8 +175,8 @@ class EmptyBot extends ActivityHandler {
                 },
                 {
                     type: "imBack",
-                    title: '"#cards"',
-                    value: "#cards",
+                    title: '"#servers"',
+                    value: "#servers",
                 },
                 {
                     type: "imBack",
@@ -221,14 +222,245 @@ class EmptyBot extends ActivityHandler {
         );
     }
 
-    createServerCard(textBlock, factset) {
+    createServerCard(serverCard) {
         return CardFactory.adaptiveCard({
-            $schema: "https://adaptivecards.io/schemas/adaptive-card.json",
+            $schema: "http://adaptivecards.io/schemas/adaptive-card.json",
             type: "AdaptiveCard",
-            version: "1.0",
-            body: [textBlock, factset],
-            actions: [],
+            version: "1.2",
+            body: [
+                {
+                    type: "Container",
+                    items: [
+                        {
+                            type: "TextBlock",
+                            text: serverCard.serverName,
+                            size: "extraLarge",
+                            wrap: true,
+                            weight: "bolder",
+                        },
+                        {
+                            type: "Container",
+                            items: [
+                                {
+                                    type: "TextBlock",
+                                    text: " ",
+                                    wrap: true,
+                                },
+                            ],
+                        },
+                    ],
+                },
+                {
+                    type: "Container",
+                    spacing: "None",
+                    items: [
+                        {
+                            type: "ColumnSet",
+                            columns: [
+                                {
+                                    type: "Column",
+                                    width: "stretch",
+                                    items: [
+                                        {
+                                            type: "TextBlock",
+                                            text: "CPU",
+                                            spacing: "None",
+                                            wrap: true,
+                                            size: "Medium",
+                                        },
+                                        {
+                                            type: "TextBlock",
+                                            text: serverCard.cpuText + ' %',
+                                            color: this.getGradeColor(serverCard.cpuText),
+                                            size: "ExtraLarge",
+                                            wrap: true,
+                                        },
+                                    ],
+                                },
+                                {
+                                    type: "Column",
+                                    width: "auto",
+                                    items: [
+                                        {
+                                            type: "Image",
+                                            url: serverCard.cpuImgUrl,
+                                            width: "100px",
+                                            height: "100px",
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            type: "ColumnSet",
+                            columns: [
+                                {
+                                    type: "Column",
+                                    width: "stretch",
+                                    items: [
+                                        {
+                                            type: "TextBlock",
+                                            text: "Memory",
+                                            spacing: "None",
+                                            wrap: true,
+                                            size: "Medium",
+                                        },
+                                        {
+                                            type: "TextBlock",
+                                            text: serverCard.memoryText + ' %',
+                                            color: this.getGradeColor(serverCard.memoryText),
+                                            size: "ExtraLarge",
+                                            wrap: true,
+                                        },
+                                    ],
+                                },
+                                {
+                                    type: "Column",
+                                    width: "auto",
+                                    items: [
+                                        {
+                                            type: "Image",
+                                            url: serverCard.memoryImgUrl,
+                                            width: "100px",
+                                            height: "100px",
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            type: "ColumnSet",
+                            columns: [
+                                {
+                                    type: "Column",
+                                    width: "stretch",
+                                    items: [
+                                        {
+                                            type: "TextBlock",
+                                            text: "Storage",
+                                            spacing: "None",
+                                            wrap: true,
+                                            size: "Medium",
+                                        },
+                                        {
+                                            type: "TextBlock",
+                                            text: serverCard.storageText + ' %',
+                                            color: this.getGradeColor(serverCard.storageText),
+                                            size: "ExtraLarge",
+                                            wrap: true,
+                                        },
+                                    ],
+                                },
+                                {
+                                    type: "Column",
+                                    width: "auto",
+                                    items: [
+                                        {
+                                            type: "Image",
+                                            url: serverCard.storageImgUrl,
+                                            width: "100px",
+                                            height: "100px",
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            type: "ColumnSet",
+                            columns: [
+                                {
+                                    type: "Column",
+                                    width: "stretch",
+                                    items: [
+                                        {
+                                            type: "TextBlock",
+                                            text: "HTTP Connections",
+                                            spacing: "None",
+                                            wrap: true,
+                                            size: "Medium",
+                                        },
+                                        {
+                                            type: "TextBlock",
+                                            text: serverCard.httpConnText,
+                                            color: this.getGradeColor(serverCard.httpConnText),
+                                            size: "ExtraLarge",
+                                            wrap: true,
+                                        },
+                                    ],
+                                },
+                                {
+                                    type: "Column",
+                                    width: "auto",
+                                    items: [
+                                        {
+                                            type: "Image",
+                                            url: serverCard.httpConnImgUrl,
+                                            width: "100px",
+                                            height: "100px",
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            type: "ColumnSet",
+                            columns: [
+                                {
+                                    type: "Column",
+                                    width: "stretch",
+                                    items: [
+                                        {
+                                            type: "TextBlock",
+                                            text: "Database Connections",
+                                            spacing: "None",
+                                            wrap: true,
+                                            size: "Medium",
+                                        },
+                                        {
+                                            type: "TextBlock",
+                                            text: serverCard.dbConnText,
+                                            color: this.getGradeColor(serverCard.dbConnText),
+                                            size: "ExtraLarge",
+                                            wrap: true,
+                                        },
+                                    ],
+                                },
+                                {
+                                    type: "Column",
+                                    width: "auto",
+                                    items: [
+                                        {
+                                            type: "Image",
+                                            url: serverCard.dbConnIUrl,
+                                            width: "100px",
+                                            height: "100px",
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+            actions: [
+                {
+                    type: "Action.OpenUrl",
+                    title: "View Info",
+                    url: "http://localhost:8080/img/pngegg.png",
+                    style: "positive",
+                },
+            ],
         });
+    }
+
+    getGradeColor(value){
+        if(value <= 60){
+            return 'good';
+        } else if( value < 85 && value > 60){
+            return 'warning';
+        } else {
+            return 'attention';
+        }
     }
 
     async sendSuggestedActions(turnContext) {
