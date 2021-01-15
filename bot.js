@@ -62,7 +62,7 @@ class EmptyBot extends ActivityHandler {
                     break;
                 case "#Servers":
                     let serverCards = await axios.get(
-                        "http://localhost:8080/demo/getServerCards"
+                        "http://demochatops.azurewebsites.net/demo/getServerCards"
                     );
 
                     let serverCardAttachments = [];
@@ -80,7 +80,7 @@ class EmptyBot extends ActivityHandler {
                     break;
                 case "#ShowMembers":
                     const memberCards = await axios.get(
-                        "http://localhost:8080/demo/getMemberCards"
+                        "http://demochatops.azurewebsites.net/demo/getMemberCards"
                     );
 
                     let memberCardsAttachments = [];
@@ -504,7 +504,7 @@ class EmptyBot extends ActivityHandler {
                 {
                     type: "Action.OpenUrl",
                     title: "View Info",
-                    url: "http://localhost:8080/img/pngegg.png",
+                    url: "http://demochatops.azurewebsites.net/img/pngegg.png",
                     style: "positive",
                 },
             ],
