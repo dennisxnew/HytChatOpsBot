@@ -15,8 +15,26 @@ const ShowLogCard = require("./resources/ShowLogCard.json");
 const serverCard = require("./resources/serverCard.json");
 
 class EmptyBot extends ActivityHandler {
-    constructor() {
+    constructor(conversationState, userState, dialog) {
         super();
+        if (!conversationState)
+            throw new Error(
+                "[DialogBot]: Missing parameter. conversationState is required"
+            );
+        if (!userState)
+            throw new Error(
+                "[DialogBot]: Missing parameter. userState is required"
+            );
+        if (!dialog)
+            throw new Error(
+                "[DialogBot]: Missing parameter. dialog is required"
+            );
+
+        this.conversationState = conversationState;
+        this.userState = userState;
+        this.dialog = dialog;
+        this.dialogState = this.conversationState.createProperty("DialogState");
+
         this.onMembersAdded(async (context, next) => {
             const membersAdded = context.activity.membersAdded;
             for (let cnt = 0; cnt < membersAdded.length; ++cnt) {
@@ -32,7 +50,8 @@ class EmptyBot extends ActivityHandler {
 
         this.onMessage(async (context, next) => {
             const input = context.activity.text;
-
+            console.log(context.activity);
+            // await this.dialog.run(context, this.dialogState);
             switch (input) {
                 case "#h":
                     const reply = MessageFactory.text(`您輸入了 ${input}`);
@@ -41,7 +60,6 @@ class EmptyBot extends ActivityHandler {
                         attachments: [this.createHeroCard()],
                     });
                     break;
-                case "#servers":
                 case "#Servers":
                     let serverCards = await axios.get(
                         "http://localhost:8080/demo/getServerCards"
@@ -56,6 +74,24 @@ class EmptyBot extends ActivityHandler {
 
                     await context.sendActivity({
                         attachments: serverCardAttachments,
+                        attachmentLayout: AttachmentLayoutTypes.Carousel,
+                    });
+
+                    break;
+                case "#ShowMembers":
+                    const memberCards = await axios.get(
+                        "http://localhost:8080/demo/getMemberCards"
+                    );
+
+                    let memberCardsAttachments = [];
+                    for (let i = 0; i < memberCards.data.length; i++) {
+                        memberCardsAttachments.push(
+                            this.createMemberCard(memberCards.data[i])
+                        );
+                    }
+
+                    await context.sendActivity({
+                        attachments: memberCardsAttachments,
                         attachmentLayout: AttachmentLayoutTypes.Carousel,
                     });
 
@@ -79,11 +115,12 @@ class EmptyBot extends ActivityHandler {
                     break;
                 case "#cards2":
                     await context.sendActivity({
-                        attachments: [this.createThumbnailCard(),
+                        attachments: [
                             this.createThumbnailCard(),
-                            this.createThumbnailCard()
+                            this.createThumbnailCard(),
+                            this.createThumbnailCard(),
                         ],
-                        attachmentLayout: AttachmentLayoutTypes.Carousel
+                        attachmentLayout: AttachmentLayoutTypes.Carousel,
                     });
                     break;
                 case "#ShowLog":
@@ -91,20 +128,26 @@ class EmptyBot extends ActivityHandler {
                         attachments: [this.createShowLogCard()],
                     });
                     break;
+                case "#d":
+                    await this.dialog.run(context, this.dialogState);
+                    break;
                 case "#heroCard":
                     await context.sendActivity({
                         attachments: [this.createHeroCard()],
                     });
                     break;
-                default:
-                    await context.sendActivity(
-                        "請輸入正確指令，可透過「#Help」查詢"
-                    );
-                    break;
             }
 
             await next();
         });
+    }
+
+    async run(context) {
+        await super.run(context);
+
+        // Save any state changes. The load happened during the execution of the Dialog.
+        await this.conversationState.saveChanges(context, false);
+        await this.userState.saveChanges(context, false);
     }
 
     helpCard() {
@@ -190,6 +233,11 @@ class EmptyBot extends ActivityHandler {
                 },
                 {
                     type: "imBack",
+                    title: '"#ShowMembers"',
+                    value: "#ShowMembers",
+                },
+                {
+                    type: "imBack",
                     title: '"#ShowLog"',
                     value: "#ShowLog",
                 },
@@ -270,8 +318,10 @@ class EmptyBot extends ActivityHandler {
                                         },
                                         {
                                             type: "TextBlock",
-                                            text: serverCard.cpuText + ' %',
-                                            color: this.getGradeColor(serverCard.cpuText),
+                                            text: serverCard.cpuText + " %",
+                                            color: this.getGradeColor(
+                                                serverCard.cpuText
+                                            ),
                                             size: "ExtraLarge",
                                             wrap: true,
                                         },
@@ -307,8 +357,10 @@ class EmptyBot extends ActivityHandler {
                                         },
                                         {
                                             type: "TextBlock",
-                                            text: serverCard.memoryText + ' %',
-                                            color: this.getGradeColor(serverCard.memoryText),
+                                            text: serverCard.memoryText + " %",
+                                            color: this.getGradeColor(
+                                                serverCard.memoryText
+                                            ),
                                             size: "ExtraLarge",
                                             wrap: true,
                                         },
@@ -344,8 +396,10 @@ class EmptyBot extends ActivityHandler {
                                         },
                                         {
                                             type: "TextBlock",
-                                            text: serverCard.storageText + ' %',
-                                            color: this.getGradeColor(serverCard.storageText),
+                                            text: serverCard.storageText + " %",
+                                            color: this.getGradeColor(
+                                                serverCard.storageText
+                                            ),
                                             size: "ExtraLarge",
                                             wrap: true,
                                         },
@@ -382,7 +436,9 @@ class EmptyBot extends ActivityHandler {
                                         {
                                             type: "TextBlock",
                                             text: serverCard.httpConnText,
-                                            color: this.getGradeColor(serverCard.httpConnText),
+                                            color: this.getGradeColor(
+                                                serverCard.httpConnText
+                                            ),
                                             size: "ExtraLarge",
                                             wrap: true,
                                         },
@@ -419,7 +475,9 @@ class EmptyBot extends ActivityHandler {
                                         {
                                             type: "TextBlock",
                                             text: serverCard.dbConnText,
-                                            color: this.getGradeColor(serverCard.dbConnText),
+                                            color: this.getGradeColor(
+                                                serverCard.dbConnText
+                                            ),
                                             size: "ExtraLarge",
                                             wrap: true,
                                         },
@@ -453,14 +511,79 @@ class EmptyBot extends ActivityHandler {
         });
     }
 
-    getGradeColor(value){
-        if(value <= 60){
-            return 'good';
-        } else if( value < 85 && value > 60){
-            return 'warning';
+    getGradeColor(value) {
+        if (value <= 60) {
+            return "good";
+        } else if (value < 85 && value > 60) {
+            return "warning";
         } else {
-            return 'attention';
+            return "attention";
         }
+    }
+    createMemberCard(memberInfo) {
+        return CardFactory.adaptiveCard({
+            type: "AdaptiveCard",
+            body: [
+                {
+                    type: "ColumnSet",
+                    columns: [
+                        {
+                            type: "Column",
+                            items: [
+                                {
+                                    type: "Image",
+                                    url: memberInfo.profileImage,
+                                    style: "Person",
+                                    width: "80px",
+                                    height: "80px",
+                                },
+                            ],
+                            width: "stretch",
+                        },
+                        {
+                            type: "Column",
+                            items: [
+                                {
+                                    type: "TextBlock",
+                                    size: "Large",
+                                    weight: "Bolder",
+                                    text: memberInfo.name,
+                                    wrap: true,
+                                    horizontalAlignment: "Left",
+                                },
+                                {
+                                    type: "TextBlock",
+                                    text: memberInfo.enName,
+                                    wrap: true,
+                                    horizontalAlignment: "Left",
+                                },
+                            ],
+                            verticalContentAlignment: "Center",
+                            width: "stretch",
+                        },
+                    ],
+                },
+                {
+                    type: "FactSet",
+                    facts: [
+                        {
+                            title: "職位",
+                            value: memberInfo.position,
+                        },
+                        {
+                            title: "電話",
+                            value: memberInfo.phone,
+                        },
+                        {
+                            title: "E-mail",
+                            value: memberInfo.Email,
+                        },
+                    ],
+                },
+            ],
+            $schema: "http://adaptivecards.io/schemas/adaptive-card.json",
+            version: "1.2",
+        });
     }
 
     async sendSuggestedActions(turnContext) {
