@@ -6,6 +6,7 @@ const {
     ActivityHandler,
     MessageFactory,
     CardFactory,
+    ActivityTypes  
 } = require("botbuilder");
 const { ActionTypes } = require("botframework-schema");
 const axios = require("axios");
@@ -14,6 +15,7 @@ const AdaptiveCard = require("./resources/adaptiveCard.json");
 const ShowLogCard = require("./resources/ShowLogCard.json");
 const serverCard = require("./resources/serverCard.json");
 
+const ACT_SHOW_LOG = "ACT_SHOW_LOG";
 class EmptyBot extends ActivityHandler {
     constructor(conversationState, userState, dialog) {
         super();
@@ -50,17 +52,37 @@ class EmptyBot extends ActivityHandler {
 
         this.onMessage(async (context, next) => {
             const input = context.activity.text;
-            console.log(context.activity);
-            // await this.dialog.run(context, this.dialogState);
+            const value = context.activity.value;
+            console.log(value);
+            if(value && value.actionId === ACT_SHOW_LOG){
+                const reply = { type: ActivityTypes.Message };
+                const userInput = {serverName: value.serverName, logLevel: value.logLevel, start: value.startDate + " " + value.startTime, end: value.endDate + " " + value.endTime}
+                
+                const response = await axios.post("http://demochatops.azurewebsites.net/demo/getLogs", {level: userInput.logLevel, start: userInput.start, end: userInput.end});
+                const { data } = response;
+
+                let logList = [];
+                data.forEach(item => {
+                    let logContent = {};
+                    logContent.title = item.date + " " + item.level + " " + item.className;
+                    logContent.text = item.message;                
+                    logList.push(this.createLogTemplate(logContent));
+                });               
+
+                reply.attachments =  [this.createLogCard(userInput, logList)];
+                
+                
+                await context.sendActivity(reply);
+            }
+
             switch (input) {
                 case "#h":
                     const reply = MessageFactory.text(`您輸入了 ${input}`);
                     await context.sendActivity(reply);
                     await context.sendActivity({
-                        attachments: [this.createHeroCard()],
+                        attachments: [this.createHelpCard()],
                     });
                     break;
-                case "#Servers":
                 case "#servers":
                     let serverCards = await axios.get(
                         "http://demochatops.azurewebsites.net/demo/getServerCards"
@@ -130,7 +152,8 @@ class EmptyBot extends ActivityHandler {
                     });
                     break;
                 case "#d":
-                    await this.dialog.run(context, this.dialogState);
+                    // 20200114 Dennis.Chen - 試做Dialog
+                    // await this.dialog.run(context, this.dialogState);
                     break;
                 case "#heroCard":
                     await context.sendActivity({
@@ -205,7 +228,54 @@ class EmptyBot extends ActivityHandler {
         return CardFactory.adaptiveCard(ShowLogCard);
     }
 
-    createHeroCard() {
+    createLogCard(userInput, logList) {
+        console.log(logList);
+        return CardFactory.adaptiveCard({
+            type: "AdaptiveCard",
+            $schema: "http://adaptivecards.io/schemas/adaptive-card.json",
+            version: "1.2",
+            body: [
+                {
+                    type: "TextBlock",
+                    text: "您搜尋的範圍是:",
+                    wrap: true,
+                    weight: "Bolder",
+                    color: "Accent",
+                    size: "Large"
+                },
+                {
+                    type: "FactSet",
+                    facts: [
+                        {
+                            title: "Server Name:",
+                            value: userInput.serverName
+                        },
+                        {
+                            title: "Log Level:",
+                            value: userInput.logLevel
+                        },
+                        {
+                            title: "Start Time:",
+                            value: userInput.start
+                        },
+                        {
+                            title: "End Time:",
+                            value: userInput.end
+                        }
+                    ],
+                    spacing: "Medium",
+                    separator: true,
+                    height: "stretch",
+                    id: "SHOW_LOG_FACTSET"
+                }
+            ],
+            actions: logList
+                
+            
+        });
+    }
+
+    createHelpCard() {
         return CardFactory.heroCard(
             "請點擊下列按鈕執行指令",
             CardFactory.images([
@@ -617,6 +687,23 @@ class EmptyBot extends ActivityHandler {
             "What is the best color?"
         );
         await turnContext.sendActivity(reply);
+    }
+
+    createLogTemplate(logContent) {
+        return {
+            type: "Action.ShowCard",
+            title: logContent.title,
+            card: {
+              type: "AdaptiveCard",
+              body: [
+                {
+                  type: "TextBlock",
+                  text: logContent.text,
+                  wrap: true
+                }
+              ]
+            }
+          }
     }
 }
 

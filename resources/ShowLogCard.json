@@ -6,7 +6,7 @@
         {
             "type": "TextBlock",
             "weight": "Bolder",
-            "text": "調查伺服器Log",
+            "text": "調查伺服器Error Log",
             "size": "ExtraLarge",
             "wrap": true,
             "color": "Good",
@@ -49,6 +49,35 @@
         },
         {
             "type": "TextBlock",
+            "text": "請選擇要調查的Log Level",
+            "wrap": true
+        },
+        {
+            "type": "Input.ChoiceSet",
+            "isMultiSelect": true,
+            "choices": [
+                {
+                    "title": "Error",
+                    "value": "ERROR"
+                },
+                {
+                    "title": "Warn",
+                    "value": "WARN"
+                },
+                {
+                    "title": "Fatal",
+                    "value": "FATAL"
+                }
+            ],
+            "placeholder": "請選擇要調查的Log Level",
+            "separator": true,
+            "wrap": true,
+            "isRequired": true,
+            "errorMessage": "請選擇Server",
+            "id": "logLevel"
+        },
+        {
+            "type": "TextBlock",
             "text": "開始時間",
             "wrap": true
         },
@@ -81,7 +110,10 @@
     "actions": [
         {
             "type": "Action.Submit",
-            "title": "送出"
+            "title": "送出",
+            "data": {
+                "actionId": "ACT_SHOW_LOG"
+            }       
         }
     ]
 }
