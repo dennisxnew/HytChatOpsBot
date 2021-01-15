@@ -5,14 +5,77 @@
     "body": [
         {
             "type": "TextBlock",
-            "size": "Medium",
             "weight": "Bolder",
-            "text": "Text"
+            "text": "調查伺服器Log",
+            "size": "ExtraLarge",
+            "wrap": true,
+            "color": "Good",
+            "horizontalAlignment": "Center"         
         },
         {
             "type": "TextBlock",
-            "text": "Text",
+            "text": "請選擇要調查的Server名稱與時間區間",
+            "wrap": true,
+            "size": "Large",
+            "weight": "Bolder",
+            "separator": true
+        },
+        {
+            "type": "Input.ChoiceSet",
+            "choices": [
+                {
+                    "title": "APP Server",
+                    "value": "app-server"
+                },
+                {
+                    "title": "Login API Server",
+                    "value": "login-api-server"
+                },
+                {
+                    "title": "Account API Server",
+                    "value": "account-api-server"
+                },
+                {
+                    "title": "Payment API Server",
+                    "value": "payment-api-server"
+                }
+            ],
+            "placeholder": "請選擇要調查的Server",
+            "separator": true,
+            "wrap": true,
+            "isRequired": true,
+            "errorMessage": "請選擇Server",
+            "id": "serverName"
+        },
+        {
+            "type": "TextBlock",
+            "text": "開始時間",
             "wrap": true
+        },
+        {
+            "type": "Input.Date",
+            "id": "startDate",
+            "value": "2020/01/01"
+        },
+        {
+            "type": "Input.Time",
+            "id": "startTime",
+            "value": "00:00:00"
+        },
+        {
+            "type": "TextBlock",
+            "text": "結束時間",
+            "wrap": true
+        },
+        {
+            "type": "Input.Date",
+            "id": "endDate",
+            "value": "2020/01/01"
+        },
+        {
+            "type": "Input.Time",
+            "id": "endTime",
+            "value": "00:00:00"
         }
     ],
     "actions": [
