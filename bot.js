@@ -61,6 +61,7 @@ class EmptyBot extends ActivityHandler {
                     });
                     break;
                 case "#Servers":
+                case "#servers":
                     let serverCards = await axios.get(
                         "http://demochatops.azurewebsites.net/demo/getServerCards"
                     );
