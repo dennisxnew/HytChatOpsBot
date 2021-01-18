@@ -6,18 +6,21 @@ const {
     ActivityHandler,
     MessageFactory,
     CardFactory,
-    ActivityTypes  
+    ActivityTypes,
+    TurnContext  
 } = require("botbuilder");
 const { ActionTypes } = require("botframework-schema");
 const axios = require("axios");
 
 const AdaptiveCard = require("./resources/adaptiveCard.json");
 const ShowLogCard = require("./resources/ShowLogCard.json");
+const LogResultCard = require("./resources/LogResultCard.json");
 const serverCard = require("./resources/serverCard.json");
+const HelpCard = require("./resources/HelpCard.json");
 
 const ACT_SHOW_LOG = "ACT_SHOW_LOG";
 class EmptyBot extends ActivityHandler {
-    constructor(conversationState, userState, dialog) {
+    constructor(conversationState, userState, dialog, conversationReferences) {
         super();
         if (!conversationState)
             throw new Error(
@@ -37,6 +40,14 @@ class EmptyBot extends ActivityHandler {
         this.dialog = dialog;
         this.dialogState = this.conversationState.createProperty("DialogState");
 
+        this.conversationReferences = conversationReferences;
+
+        this.onConversationUpdate(async (context, next) => {
+            this.addConversationReference(context.activity);
+
+            await next();
+        });
+
         this.onMembersAdded(async (context, next) => {
             const membersAdded = context.activity.membersAdded;
             for (let cnt = 0; cnt < membersAdded.length; ++cnt) {
@@ -51,6 +62,9 @@ class EmptyBot extends ActivityHandler {
         });
 
         this.onMessage(async (context, next) => {
+            //訊息推播
+            this.addConversationReference(context.activity);
+
             const input = context.activity.text;
             const value = context.activity.value;
             console.log(value);
@@ -61,29 +75,36 @@ class EmptyBot extends ActivityHandler {
                 const response = await axios.post("http://demochatops.azurewebsites.net/demo/getLogs", {level: userInput.logLevel, start: userInput.start, end: userInput.end});
                 const { data } = response;
 
-                let logList = [];
-                data.forEach(item => {
+                let logResultCard = this.createLogResultCard(userInput);
+                let logItemList = [];
+                data.forEach((item, i) => {
                     let logContent = {};
                     logContent.title = item.date + " " + item.level + " " + item.className;
                     logContent.text = item.message;                
-                    logList.push(this.createLogTemplate(logContent));
-                });               
-
-                reply.attachments =  [this.createLogCard(userInput, logList)];
+                    logItemList.push(this.createLogItem(logContent));
+                    if((i + 1) % 6 === 0){
+                        logResultCard.body.push(this.createActionSet(logItemList));
+                        logItemList = [];
+                    }
+                });
+                logResultCard.body.push(this.createActionSet(logItemList));
                 
+
+                reply.attachments = [CardFactory.adaptiveCard(logResultCard)];
+                reply.attachmentLayout = AttachmentLayoutTypes.Carousel;
                 
                 await context.sendActivity(reply);
             }
 
             switch (input) {
                 case "#h":
-                    const reply = MessageFactory.text(`您輸入了 ${input}`);
-                    await context.sendActivity(reply);
+                    // const reply = MessageFactory.text(`您輸入了 ${input}`);
+                    // await context.sendActivity(reply);
                     await context.sendActivity({
                         attachments: [this.createHelpCard()],
                     });
                     break;
-                case "#servers":
+                case "#ShowServers":
                     let serverCards = await axios.get(
                         "http://demochatops.azurewebsites.net/demo/getServerCards"
                     );
@@ -146,7 +167,7 @@ class EmptyBot extends ActivityHandler {
                         attachmentLayout: AttachmentLayoutTypes.Carousel,
                     });
                     break;
-                case "#ShowLog":
+                case "#ShowLogs":
                     await context.sendActivity({
                         attachments: [this.createShowLogCard()],
                     });
@@ -172,6 +193,11 @@ class EmptyBot extends ActivityHandler {
         // Save any state changes. The load happened during the execution of the Dialog.
         await this.conversationState.saveChanges(context, false);
         await this.userState.saveChanges(context, false);
+    }
+
+    addConversationReference(activity) {
+        const conversationReference = TurnContext.getConversationReference(activity);
+        this.conversationReferences[conversationReference.conversation.id] = conversationReference;
     }
 
     helpCard() {
@@ -228,9 +254,12 @@ class EmptyBot extends ActivityHandler {
         return CardFactory.adaptiveCard(ShowLogCard);
     }
 
-    createLogCard(userInput, logList) {
-        console.log(logList);
-        return CardFactory.adaptiveCard({
+    createHelpCard() {
+        return CardFactory.adaptiveCard(HelpCard);
+    }
+
+    createLogResultCard(userInput) {
+        return {
             type: "AdaptiveCard",
             $schema: "http://adaptivecards.io/schemas/adaptive-card.json",
             version: "1.2",
@@ -268,14 +297,11 @@ class EmptyBot extends ActivityHandler {
                     height: "stretch",
                     id: "SHOW_LOG_FACTSET"
                 }
-            ],
-            actions: logList
-                
-            
-        });
+            ]   
+        };
     }
 
-    createHelpCard() {
+    createHelpCardBakup() {
         return CardFactory.heroCard(
             "請點擊下列按鈕執行指令",
             CardFactory.images([
@@ -689,7 +715,7 @@ class EmptyBot extends ActivityHandler {
         await turnContext.sendActivity(reply);
     }
 
-    createLogTemplate(logContent) {
+    createLogItem(logContent) {
         return {
             type: "Action.ShowCard",
             title: logContent.title,
@@ -704,6 +730,13 @@ class EmptyBot extends ActivityHandler {
               ]
             }
           }
+    }
+
+    createActionSet(logItemList) {
+        return {
+            type: "ActionSet",
+            actions: logItemList
+        }
     }
 }
 

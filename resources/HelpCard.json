@@ -1,0 +1,187 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "body": [
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": 1,
+                    "items": [
+                        {
+                            "type": "Image",
+                            "url": "http://demochatops.azurewebsites.net/img/chat-bot.png",
+                            "size": "auto"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": 2,
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "#h - 所有指令介紹",
+                            "weight": "Bolder",
+                            "size": "Large",
+                            "wrap": true
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "功能主要有： \r\n- 團隊管理\r\n- 伺服器管理\r\n- CI/CD",
+                            "isSubtle": true,
+                            "wrap": true
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "請點擊按鈕執行指令",
+                            "isSubtle": true,
+                            "wrap": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "TextBlock",
+            "text": "團隊管理",
+            "wrap": true,
+            "separator": true,
+            "size": "Medium",
+            "weight": "Bolder"
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "#ShowMembers",
+                    "data": {
+                        "msteams": {
+                            "type": "imBack",
+                            "value": "#ShowMembers"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "TextBlock",
+            "text": "Server 管理",
+            "wrap": true,
+            "size": "Medium",
+            "weight": "Bolder",
+            "separator": true
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "#ShowServers",
+                    "data": {
+                        "msteams": {
+                            "type": "imBack",
+                            "value": "#ShowServers"
+                        }
+                    }
+                },
+                {
+                    "type": "Action.Submit",
+                    "title": "#ShowLogs",
+                    "data": {
+                        "msteams": {
+                            "type": "imBack",
+                            "value": "#ShowLogs"
+                        }
+                    }
+                },
+                {
+                    "type": "Action.Submit",
+                    "title": "#StopServer",
+                    "data": {
+                        "msteams": {
+                            "type": "imBack",
+                            "value": "#StopServer"
+                        }
+                    }
+                },
+                {
+                    "type": "Action.Submit",
+                    "title": "#StartServer",
+                    "data": {
+                        "msteams": {
+                            "type": "imBack",
+                            "value": "#StartServer"
+                        }
+                    }
+                },
+                {
+                    "type": "Action.Submit",
+                    "title": "#RestartServer",
+                    "data": {
+                        "msteams": {
+                            "type": "imBack",
+                            "value": "#RestartServer"
+                        }
+                    }
+                },
+                {
+                    "type": "Action.Submit",
+                    "title": "#HealthCheck",
+                    "data": {
+                        "msteams": {
+                            "type": "imBack",
+                            "value": "#HealthCheck"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "TextBlock",
+            "text": "CI/CD",
+            "wrap": true,
+            "weight": "Bolder",
+            "size": "Medium",
+            "separator": true
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "#Test",
+                    "data": {
+                        "msteams": {
+                            "type": "imBack",
+                            "value": "#Test"
+                        }
+                    }
+                },
+                {
+                    "type": "Action.Submit",
+                    "title": "#Deploy",
+                    "data": {
+                        "msteams": {
+                            "type": "imBack",
+                            "value": "#Deploy"
+                        }
+                    }
+                },
+                {
+                    "type": "Action.Submit",
+                    "title": "#CodeScanReport",
+                    "data": {
+                        "msteams": {
+                            "type": "imBack",
+                            "value": "#CodeScanReport"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

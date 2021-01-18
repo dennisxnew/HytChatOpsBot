@@ -1,0 +1,151 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.2",
+    "body": [
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "系統警告!",
+                    "wrap": true,
+                    "size": "Large",
+                    "color": "Attention",
+                    "horizontalAlignment": "Center"
+                }
+            ],
+            "style": "attention",
+            "bleed": true
+        },
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "FactSet",
+                    "facts": [
+                        {
+                            "title": "系統",
+                            "value": "Order Service"
+                        },
+                        {
+                            "title": "警告原因",
+                            "value": "交易異常"
+                        },
+                        {
+                            "title": "時間",
+                            "value": "2021-01-01 02:12:55"
+                        },
+                        {
+                            "title": "描述",
+                            "value": "今日交易失敗件數: 6，已超過安全閥值每日5筆"
+                        }
+                    ]
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "負責人",
+                    "wrap": true,
+                    "height": "stretch",
+                    "size": "Medium",
+                    "weight": "Bolder",
+                    "color": "Dark"
+                }
+            ]
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": 1,
+                    "items": [
+                        {
+                            "type": "Image",
+                            "url": "http://demochatops.azurewebsites.net/img/musk.jpg"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": 2,
+                    "items": [
+                        {
+                            "type": "FactSet",
+                            "facts": [
+                                {
+                                    "title": "名稱",
+                                    "value": "Elon Musk"
+                                },
+                                {
+                                    "title": "職稱",
+                                    "value": "PM"
+                                },
+                                {
+                                    "title": "Email",
+                                    "value": "demo@mail.com"
+                                },
+                                {
+                                    "title": "Phone",
+                                    "value": "0987654321"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "TextBlock",
+            "text": "建議處理步驟",
+            "wrap": true,
+            "size": "Medium",
+            "weight": "Bolder"
+        },
+        {
+            "type": "TextBlock",
+            "text": "1. #ShowLogs 調查錯誤log\r\n2. #ShowFailOrder 調查失敗訂單歷程\r\n3. #CreateTicket 建立工單\r\n4. 若無法及時修復，可執行#Meltdown，關閉所有交易功能。",
+            "wrap": true
+        },
+        {
+            "type": "TextBlock",
+            "text": "建議指令",
+            "wrap": true,
+            "size": "Medium",
+            "weight": "Bolder"
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "#ShowLogs"
+                },
+                {
+                    "type": "Action.Submit",
+                    "title": "#ShowFailOrder"
+                },
+                {
+                    "type": "Action.Submit",
+                    "title": "#CreateTicket"
+                },
+                {
+                    "type": "Action.Submit",
+                    "title": "#Meltdown"
+                }
+            ]
+        },
+        {
+            "type": "TextBlock",
+            "text": "常用連結",
+            "wrap": true,
+            "size": "Medium",
+            "weight": "Bolder"
+        },
+        {
+            "type": "TextBlock",
+            "text": "[1. Kibana](https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features)",
+            "wrap": true
+        }
+    ]
+}
