@@ -11,7 +11,6 @@
                     "text": "系統警告!",
                     "wrap": true,
                     "size": "Large",
-                    "color": "Attention",
                     "horizontalAlignment": "Center"
                 }
             ],
@@ -75,7 +74,7 @@
                             "facts": [
                                 {
                                     "title": "名稱",
-                                    "value": "Elon Musk"
+                                    "value": "Musk"
                                 },
                                 {
                                     "title": "職稱",
@@ -96,6 +95,48 @@
             ]
         },
         {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": 1,
+                    "items": [
+                        {
+                            "type": "Image",
+                            "url": "http://demochatops.azurewebsites.net/img/zuckerberg.jpg"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": 2,
+                    "items": [
+                        {
+                            "type": "FactSet",
+                            "facts": [
+                                {
+                                    "title": "名稱",
+                                    "value": "Zuckerberg"
+                                },
+                                {
+                                    "title": "職稱",
+                                    "value": "SD"
+                                },
+                                {
+                                    "title": "Email",
+                                    "value": "demo.sd@mail.com"
+                                },
+                                {
+                                    "title": "Phone",
+                                    "value": "0912345678"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "type": "TextBlock",
             "text": "建議處理步驟",
             "wrap": true,
@@ -104,7 +145,7 @@
         },
         {
             "type": "TextBlock",
-            "text": "1. #ShowLogs 調查錯誤log\r\n2. #ShowFailOrder 調查失敗訂單歷程\r\n3. #CreateTicket 建立工單\r\n4. 若無法及時修復，可執行#Meltdown，關閉所有交易功能。",
+            "text": "1. **#ShowLogs** 調查錯誤log\r\n2. **#ShowFailOrder** 調查失敗訂單歷程\r\n3. **#CreateTicket** 建立工單\r\n4. 若無法及時修復，可執行 **#Meltdown** ，關閉所有交易功能。",
             "wrap": true
         },
         {
@@ -119,19 +160,43 @@
             "actions": [
                 {
                     "type": "Action.Submit",
-                    "title": "#ShowLogs"
+                    "title": "#ShowLogs",
+                    "data": {
+                        "msteams": {
+                            "type": "imBack",
+                            "value": "#ShowLogs"
+                        }
+                    }
                 },
                 {
                     "type": "Action.Submit",
-                    "title": "#ShowFailOrder"
+                    "title": "#ShowFailOrder",
+                    "data": {
+                        "msteams": {
+                            "type": "imBack",
+                            "value": "#ShowFailOrder"
+                        }
+                    }
                 },
                 {
                     "type": "Action.Submit",
-                    "title": "#CreateTicket"
+                    "title": "#CreateTicket",
+                    "data": {
+                        "msteams": {
+                            "type": "imBack",
+                            "value": "#CreateTicket"
+                        }
+                    }
                 },
                 {
                     "type": "Action.Submit",
-                    "title": "#Meltdown"
+                    "title": "#Meltdown",
+                    "data": {
+                        "msteams": {
+                            "type": "imBack",
+                            "value": "#Meltdown"
+                        }
+                    }
                 }
             ]
         },
