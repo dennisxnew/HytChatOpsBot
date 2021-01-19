@@ -7,15 +7,39 @@
             "type": "Container",
             "items": [
                 {
-                    "type": "TextBlock",
-                    "text": "系統警告!",
-                    "wrap": true,
-                    "size": "Large",
-                    "horizontalAlignment": "Center"
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": 0.8,
+                            "items": [
+                                {
+                                    "type": "Image",
+                                    "url": "http://demochatops.azurewebsites.net/img/warning.png",
+                                    "size": "Small",
+                                    "horizontalAlignment": "Right"
+                                }
+                            ],
+                            "verticalContentAlignment": "Center"
+                        },
+                        {
+                            "type": "Column",
+                            "width": 1.2,
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": "系統警告!",
+                                    "wrap": true,
+                                    "id": "k",
+                                    "size": "Large"
+                                }
+                            ],
+                            "verticalContentAlignment": "Center"
+                        }
+                    ]
                 }
             ],
-            "style": "attention",
-            "bleed": true
+            "style": "attention"
         },
         {
             "type": "Container",
@@ -40,30 +64,34 @@
                             "value": "今日交易失敗件數: 6，已超過安全閥值每日5筆"
                         }
                     ]
-                },
-                {
-                    "type": "TextBlock",
-                    "text": "負責人",
-                    "wrap": true,
-                    "height": "stretch",
-                    "size": "Medium",
-                    "weight": "Bolder",
-                    "color": "Dark"
                 }
             ]
+        },
+        {
+            "type": "TextBlock",
+            "text": "負責人",
+            "wrap": true,
+            "height": "stretch",
+            "size": "Medium",
+            "weight": "Bolder",
+            "color": "Dark",
+            "separator": true
         },
         {
             "type": "ColumnSet",
             "columns": [
                 {
                     "type": "Column",
-                    "width": 1,
+                    "width": 0.5,
                     "items": [
                         {
                             "type": "Image",
-                            "url": "http://demochatops.azurewebsites.net/img/musk.jpg"
+                            "url": "http://demochatops.azurewebsites.net/img/musk.jpg",
+                            "size": "Large"
                         }
-                    ]
+                    ],
+                    "horizontalAlignment": "Center",
+                    "verticalContentAlignment": "Center"
                 },
                 {
                     "type": "Column",
@@ -99,13 +127,16 @@
             "columns": [
                 {
                     "type": "Column",
-                    "width": 1,
+                    "width": 0.5,
                     "items": [
                         {
                             "type": "Image",
-                            "url": "http://demochatops.azurewebsites.net/img/zuckerberg.jpg"
+                            "url": "http://demochatops.azurewebsites.net/img/zuckerberg.jpg",
+                            "size": "Large"                            
                         }
-                    ]
+                    ],
+                    "horizontalAlignment": "Center",
+                    "verticalContentAlignment": "Center"
                 },
                 {
                     "type": "Column",
@@ -141,7 +172,8 @@
             "text": "建議處理步驟",
             "wrap": true,
             "size": "Medium",
-            "weight": "Bolder"
+            "weight": "Bolder",
+            "separator": true
         },
         {
             "type": "TextBlock",
@@ -153,7 +185,8 @@
             "text": "建議指令",
             "wrap": true,
             "size": "Medium",
-            "weight": "Bolder"
+            "weight": "Bolder",
+            "separator": true
         },
         {
             "type": "ActionSet",
@@ -205,11 +238,27 @@
             "text": "常用連結",
             "wrap": true,
             "size": "Medium",
-            "weight": "Bolder"
+            "weight": "Bolder",
+            "separator": true
         },
         {
             "type": "TextBlock",
             "text": "[1. Kibana](https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features)",
+            "wrap": true
+        },
+        {
+            "type": "TextBlock",
+            "text": "[2. Prometheus Log](https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features)",
+            "wrap": true
+        },
+        {
+            "type": "TextBlock",
+            "text": "[3. Jaeger Monitoring](https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features)",
+            "wrap": true
+        },
+        {
+            "type": "TextBlock",
+            "text": "[4. Kubernetes](https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features)",
             "wrap": true
         }
     ]

@@ -65,9 +65,20 @@ class EmptyBot extends ActivityHandler {
             //訊息推播
             this.addConversationReference(context.activity);
 
-            const input = context.activity.text;
+            let input = context.activity.text;            
             const value = context.activity.value;
-            console.log(value);
+            const entities = context.activity.entities;
+
+            //處理mention資料
+            if (entities) {
+                entities.filter(entity => (entity.type === "mention"))
+                        .forEach(entity => {
+                            input = input.replace(entity.text, "").replace("\\n", "");
+                        });
+                input = input.trim();
+            }
+
+            console.log(input);
             if(value && value.actionId === ACT_SHOW_LOG){
                 const reply = { type: ActivityTypes.Message };
                 const userInput = {serverName: value.serverName, logLevel: value.logLevel, start: value.startDate + " " + value.startTime, end: value.endDate + " " + value.endTime}
@@ -196,6 +207,17 @@ class EmptyBot extends ActivityHandler {
     }
 
     addConversationReference(activity) {
+        // const conversationParameters = {
+        //     isGroup: true,
+        //     channelData: {
+        //         channel: {
+        //             id: teamsChannelId
+        //         }
+        //     }
+        // };
+        // const connectorClient = context.adapter.createConnectorClient(context.activity.serviceUrl);
+        // const conversationResourceResponse = await connectorClient.conversations.createConversation(conversationParameters);
+
         const conversationReference = TurnContext.getConversationReference(activity);
         this.conversationReferences[conversationReference.conversation.id] = conversationReference;
     }

@@ -30,7 +30,7 @@
                         },
                         {
                             "type": "TextBlock",
-                            "text": "功能主要有： \r\n- 團隊管理\r\n- 伺服器管理\r\n- CI/CD",
+                            "text": "功能主要有： \r\n- 團隊管理\r\n- 伺服器管理\r\n- CI/CD\r\n- 訂單管理",
                             "isSubtle": true,
                             "wrap": true
                         },
@@ -130,7 +130,7 @@
                 },
                 {
                     "type": "Action.Submit",
-                    "title": "#HealthCheck",
+                    "title": "#HealthCheck(APP)",
                     "data": {
                         "msteams": {
                             "type": "imBack",
@@ -178,6 +178,49 @@
                         "msteams": {
                             "type": "imBack",
                             "value": "#CodeScanReport"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "TextBlock",
+            "text": "訂單管理",
+            "wrap": true,
+            "weight": "Bolder",
+            "size": "Medium",
+            "separator": true
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.Submit",
+                    "title": "#ShowOrder",
+                    "data": {
+                        "msteams": {
+                            "type": "imBack",
+                            "value": "#ShowOrder"
+                        }
+                    }
+                },
+                {
+                    "type": "Action.Submit",
+                    "title": "#ShowFailOrder",
+                    "data": {
+                        "msteams": {
+                            "type": "imBack",
+                            "value": "#ShowFailOrder"
+                        }
+                    }
+                },
+                {
+                    "type": "Action.Submit",
+                    "title": "#CreateTicket",
+                    "data": {
+                        "msteams": {
+                            "type": "imBack",
+                            "value": "#CreateTicket"
                         }
                     }
                 }
