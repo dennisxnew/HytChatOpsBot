@@ -5,8 +5,8 @@ const restify = require('restify');
 
 // Import required bot services.
 // See https://aka.ms/bot-services to learn more about the different parts of a bot.
-const { BotFrameworkAdapter, ConversationState, MemoryStorage, UserState, CardFactory } = require('botbuilder');
-
+const { BotFrameworkAdapter, ConversationState, MemoryStorage, UserState, CardFactory, TurnContext, MessageFactory, ActivityTypes} = require('botbuilder');
+const { MicrosoftAppCredentials } = require('botframework-connector');
 const conversationReferences = {};
 // This bot's main dialog.
 const { EmptyBot } = require('./bot');
@@ -64,16 +64,39 @@ server.post('/api/messages', (req, res) => {
 });
 
 server.get('/api/notify', async (req, res) => {
-    for (const conversationReference of Object.values(conversationReferences)) {
-        await adapter.continueConversation(conversationReference, async turnContext => {
-            await turnContext.sendActivity({
-                attachments: [CardFactory.adaptiveCard(AlertCard)]
-            });
-        });
-    }
 
-    res.setHeader('Content-Type', 'text/html');
+    //群組推播 - 建立新的對話框(New Thread)
+    //20200120 Dennis.Chen - 新增信任ServiceUrl，若不加此段，就會發生機器人重啟後，在沒有用戶接著傳送訊息建立權限的情形下，推播會失敗
+    MicrosoftAppCredentials.trustServiceUrl("https://smba.trafficmanager.net/apac/");
+
+    const reply = { type: ActivityTypes.Message };
+    reply.attachments = [CardFactory.adaptiveCard(AlertCard)];
+
+    const conversationParameters = {
+        isGroup: true,
+        channelData: {
+            channel: {
+                id: "19:21abfafa1e9647f394d8fee5690b1cac@thread.tacv2"
+            }
+        },
+        activity: reply
+    };
+    const connectorClient = adapter.createConnectorClient("https://smba.trafficmanager.net/apac/");
+    const conversationResourceResponse = await connectorClient.conversations.createConversation(conversationParameters);
+
+    //個人推播 
+    // for (const conversationReference of Object.values(conversationReferences)) {       
+    //     await adapter.continueConversation(conversationReference, async context => {
+    //         await context.sendActivity({
+    //             attachments: [CardFactory.adaptiveCard(AlertCard)]
+    //         });
+    //     });
+    // }
+
+    res.setHeader('Content-Type', ' application/json');
     res.writeHead(200);
-    res.write('<html><body><h1>Proactive messages have been sent.</h1></body></html>');
+    res.write(JSON.stringify({message: "success"}));
     res.end();
 });
+
+

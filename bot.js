@@ -7,7 +7,8 @@ const {
     MessageFactory,
     CardFactory,
     ActivityTypes,
-    TurnContext  
+    TurnContext,
+    teamsGetChannelId
 } = require("botbuilder");
 const { ActionTypes } = require("botframework-schema");
 const axios = require("axios");
@@ -43,7 +44,7 @@ class EmptyBot extends ActivityHandler {
         this.conversationReferences = conversationReferences;
 
         this.onConversationUpdate(async (context, next) => {
-            this.addConversationReference(context.activity);
+            this.addConversationReference(context);
 
             await next();
         });
@@ -63,7 +64,7 @@ class EmptyBot extends ActivityHandler {
 
         this.onMessage(async (context, next) => {
             //訊息推播
-            this.addConversationReference(context.activity);
+            this.addConversationReference(context);
 
             let input = context.activity.text;            
             const value = context.activity.value;
@@ -79,6 +80,10 @@ class EmptyBot extends ActivityHandler {
             }
 
             console.log(input);
+
+            const teamsChannelId = teamsGetChannelId(context.activity);
+            console.log("%%%%%%%%%%%%%");
+            console.log(context.activity);
             if(value && value.actionId === ACT_SHOW_LOG){
                 const reply = { type: ActivityTypes.Message };
                 const userInput = {serverName: value.serverName, logLevel: value.logLevel, start: value.startDate + " " + value.startTime, end: value.endDate + " " + value.endTime}
@@ -206,20 +211,14 @@ class EmptyBot extends ActivityHandler {
         await this.userState.saveChanges(context, false);
     }
 
-    addConversationReference(activity) {
-        // const conversationParameters = {
-        //     isGroup: true,
-        //     channelData: {
-        //         channel: {
-        //             id: teamsChannelId
-        //         }
-        //     }
-        // };
+    async addConversationReference(context) {
+
         // const connectorClient = context.adapter.createConnectorClient(context.activity.serviceUrl);
         // const conversationResourceResponse = await connectorClient.conversations.createConversation(conversationParameters);
-
-        const conversationReference = TurnContext.getConversationReference(activity);
-        this.conversationReferences[conversationReference.conversation.id] = conversationReference;
+        // const conversationReference = TurnContext.getConversationReference(context.activity);
+        // conversationReference.conversation.id = conversationResourceResponse.id;
+        
+        // this.conversationReferences[conversationReference.conversation.id] = conversationReference; //old code
     }
 
     helpCard() {
