@@ -1,68 +1,141 @@
 {
-  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
-  "manifestVersion": "1.5",
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.8/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.8",
   "version": "1.0.0",
   "id": "e1524b82-2232-4ea2-805d-86283d007de8",
-  "packageName": "com.teams.sample.TestChatBot7_NodeJS",
+  "packageName": "com.teams.sample.HYT_ChatOps",
   "developer": {
-    "name": "TestChatBot7_NodeJS",
-    "websiteUrl": "https://www.microsoft.com",
-    "privacyUrl": "https://www.teams.com/privacy",
-    "termsOfUseUrl": "https://www.teams.com/termsofuser"
+      "name": "HYT_ChatOps",
+      "websiteUrl": "https://www.microsoft.com",
+      "privacyUrl": "https://www.teams.com/privacy",
+      "termsOfUseUrl": "https://www.teams.com/termsofuser"
   },
   "icons": {
-    "outline": "icon-outline.png",
-    "color": "icon-color.png"
+      "color": "color.png",
+      "outline": "outline.png"
   },
   "name": {
-    "short": "TestChatBot7_NodeJS",
-    "full": "TestChatBot7_NodeJS"
+      "short": "HYT_ChatOps",
+      "full": "HYT_ChatOps"
   },
   "description": {
-    "short": "TestChatBot7_NodeJS",
-    "full": "TestChatBot7_NodeJS"
+      "short": "HYT_ChatOps",
+      "full": "HYT_ChatOps"
   },
   "accentColor": "#FFFFFF",
-  "bots": [
-    {
-      "botId": "e1524b82-2232-4ea2-805d-86283d007de8",
-      "scopes": [
-        "personal",
-        "groupchat",
-        "team"
-      ],
-      "supportsFiles": false,
-      "isNotificationOnly": false,
-      "commandLists": [
-        {
+  "configurableTabs": [
+      {
+          "configurationUrl": "https://www.fetnet.net/estore/",
+          "canUpdateConfiguration": true,
           "scopes": [
-            "personal",
-            "groupchat",
-            "team"
+              "team",
+              "groupchat"
           ],
-          "commands": [
-            {
-              "title": "MentionMe",
-              "description": "Sends message with @mention of the sender"
-            },
-            {
-              "title": "Show Welcome",
-              "description": "Shows the welcome card"
-            },
-            {
-              "title": "MessageAllMembers",
-              "description": "Send 1 to 1 message to all members of the current conversation"
-            },
-            {
-              "title": "AlertMember",
-              "description": "When System is in emergency, Bot will alert in group."
-            }
+          "context": [
+              "channelTab",
+              "privateChatTab",
+              "meetingSidePanel",
+              "meetingDetailsTab",
+              "meetingChatTab"
           ]
-        }
-      ]
-    }
+      }
+  ],
+  "bots": [
+      {
+          "botId": "e1524b82-2232-4ea2-805d-86283d007de8",
+          "scopes": [
+              "personal",
+              "groupchat",
+              "team"
+          ],
+          "commandLists": [
+              {
+                  "scopes": [
+                      "personal"
+                  ],
+                  "commands": [
+                      {
+                          "title": "#h",
+                          "description": "顯示所有指令及介紹"
+                      },
+                      {
+                          "title": "#ShowMembers",
+                          "description": "查看所有專案內成員"
+                      },
+                      {
+                          "title": "#ShowLogs",
+                          "description": "調閱指定時間內的Server Log"
+                      }
+                  ]
+              },
+              {
+                  "scopes": [
+                      "team"
+                  ],
+                  "commands": [
+                      {
+                          "title": "#h",
+                          "description": "顯示所有指令及介紹"
+                      },
+                      {
+                          "title": "#ShowMembers",
+                          "description": "查看所有專案內成員"
+                      },
+                      {
+                          "title": "#ShowLogs",
+                          "description": "調閱指定時間內的Server Log"
+                      }
+                  ]
+              },
+              {
+                  "scopes": [
+                      "groupchat"
+                  ],
+                  "commands": [
+                      {
+                          "title": "#h",
+                          "description": "顯示所有指令及介紹"
+                      },
+                      {
+                          "title": "#ShowMembers",
+                          "description": "查看所有專案內成員"
+                      },
+                      {
+                          "title": "#ShowLogs",
+                          "description": "調閱指定時間內的Server Log"
+                      }
+                  ]
+              }
+          ],
+          "supportsFiles": false,
+          "isNotificationOnly": false
+      }
   ],
   "permissions": [
+      "identity",
+      "messageTeamMembers"
   ],
-  "validDomains": []
+  "validDomains": [
+      "www.fetnet.net"
+  ],
+  "staticTabs":[
+      {
+          "entityId": "nsp_dashboard",
+          "name": "NSP DashBoard",
+          "contentUrl": "https://reacttesttabv2.azurewebsites.net/tab",
+          "websiteUrl": "https://reacttesttabv2.azurewebsites.net/tab",
+          "scopes": [
+            "team"
+          ]
+      },
+      {
+          "entityId": "personalTab",
+          "name": "Personal Tab ",
+          "contentUrl": "https://www.fetnet.net/estore/",
+          "websiteUrl": "https://www.fetnet.net/estore/",
+          "scopes": [
+            "team"
+          ]
+      }
+  ]
 }
