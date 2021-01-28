@@ -11,6 +11,7 @@ const {
     teamsGetChannelId
 } = require("botbuilder");
 const { ActionTypes } = require("botframework-schema");
+const { LuisRecognizer } = require('botbuilder-ai');
 const axios = require("axios");
 
 const AdaptiveCard = require("./resources/adaptiveCard.json");
@@ -21,20 +22,28 @@ const HelpCard = require("./resources/HelpCard.json");
 
 const ACT_SHOW_LOG = "ACT_SHOW_LOG";
 class EmptyBot extends ActivityHandler {
-    constructor(conversationState, userState, dialog, conversationReferences) {
+    constructor(conversationState, userState, dialog, conversationReferences, chatOpsLuisRecognizer) {
         super();
-        if (!conversationState)
+        if (!conversationState){
             throw new Error(
                 "[DialogBot]: Missing parameter. conversationState is required"
             );
-        if (!userState)
+        }
+        if (!userState){
             throw new Error(
                 "[DialogBot]: Missing parameter. userState is required"
             );
-        if (!dialog)
+        }
+        if (!dialog){
             throw new Error(
                 "[DialogBot]: Missing parameter. dialog is required"
             );
+        } 
+        if (!chatOpsLuisRecognizer) {
+            throw new Error('[MainDialog]: Missing parameter \'luisRecognizer\' is required');
+        }else{
+            this.chatOpsLuisRecognizer = chatOpsLuisRecognizer;
+        }
 
         this.conversationState = conversationState;
         this.userState = userState;
@@ -79,11 +88,11 @@ class EmptyBot extends ActivityHandler {
                 input = input.trim();
             }
 
-            console.log(input);
+            //console.log(input);
 
             const teamsChannelId = teamsGetChannelId(context.activity);
-            console.log("%%%%%%%%%%%%%");
-            console.log(context.activity);
+            //console.log("%%%%%%%%%%%%%");
+            //console.log(context.activity);
             if(value && value.actionId === ACT_SHOW_LOG){
                 const reply = { type: ActivityTypes.Message };
                 const userInput = {serverName: value.serverName, logLevel: value.logLevel, start: value.startDate + " " + value.startTime, end: value.endDate + " " + value.endTime}
@@ -112,6 +121,19 @@ class EmptyBot extends ActivityHandler {
                 await context.sendActivity(reply);
             }
 
+            if(this.chatOpsLuisRecognizer.isConfigured){
+                const luisResult = await this.chatOpsLuisRecognizer.executeLuisQuery(context);
+                const intent = LuisRecognizer.topIntent(luisResult)
+                console.log(intent);
+                if(intent === "LogIntent"){
+                    input = "#ShowLogs"
+                }else if(intent === "MemberIntent"){
+                    input = "#ShowMembers";
+                }else if(intent === "ServerIntent"){
+                    input = "#ShowServers";
+                }
+            }
+
             switch (input) {
                 case "#h":
                     // const reply = MessageFactory.text(`您輸入了 ${input}`);
@@ -122,7 +144,7 @@ class EmptyBot extends ActivityHandler {
                     break;
                 case "#ShowServers":
                     let serverCards = await axios.get(
-                        "http://demochatops.azurewebsites.net/demo/getServerCards"
+                        "https://demochatops.azurewebsites.net/demo/getServerCards"
                     );
 
                     let serverCardAttachments = [];
@@ -197,6 +219,7 @@ class EmptyBot extends ActivityHandler {
                         attachments: [this.createHeroCard()],
                     });
                     break;
+
             }
 
             await next();

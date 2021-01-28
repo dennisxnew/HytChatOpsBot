@@ -78,6 +78,15 @@
         },
         {
             "type": "TextBlock",
+            "text": "請輸入關鍵字",
+            "wrap": true
+        },
+        {
+            "type": "Input.Text",
+            "placeholder": "請輸入關鍵字"
+        },
+        {
+            "type": "TextBlock",
             "text": "開始時間",
             "wrap": true
         },

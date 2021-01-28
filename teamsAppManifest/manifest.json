@@ -1,7 +1,7 @@
 {
   "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.8/MicrosoftTeams.schema.json",
   "manifestVersion": "1.8",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "id": "e1524b82-2232-4ea2-805d-86283d007de8",
   "packageName": "com.teams.sample.HYT_ChatOps",
   "developer": {
@@ -122,15 +122,42 @@
       {
           "entityId": "nsp_dashboard",
           "name": "NSP DashBoard",
-          "contentUrl": "https://reacttesttabv2.azurewebsites.net/tab",
-          "websiteUrl": "https://reacttesttabv2.azurewebsites.net/tab",
+          "contentUrl": "https://obscure-earth-02607.herokuapp.com/#/dashboard",
+          "websiteUrl": "https://obscure-earth-02607.herokuapp.com/#/dashboard",
           "scopes": [
             "team"
           ]
       },
       {
-          "entityId": "personalTab",
-          "name": "Personal Tab ",
+        "entityId": "itt_dashboard",
+        "name": "ITT DashBoard",
+        "contentUrl": "https://obscure-earth-02607.herokuapp.com/#/dashboard",
+        "websiteUrl": "https://obscure-earth-02607.herokuapp.com/#/dashboard",
+        "scopes": [
+          "team"
+        ]
+      },
+      {
+        "entityId": "estore_dashboard",
+        "name": "eStore DashBoard",
+        "contentUrl": "https://obscure-earth-02607.herokuapp.com/#/dashboard",
+        "websiteUrl": "https://obscure-earth-02607.herokuapp.com/#/dashboard",
+        "scopes": [
+          "team"
+        ]
+      },
+      {
+        "entityId": "eservice_dashboard",
+        "name": "eService DashBoard",
+        "contentUrl": "https://obscure-earth-02607.herokuapp.com/#/dashboard",
+        "websiteUrl": "https://obscure-earth-02607.herokuapp.com/#/dashboard",
+        "scopes": [
+          "team"
+        ]
+      },
+      {
+          "entityId": "otherTab",
+          "name": "Other Tab ",
           "contentUrl": "https://www.fetnet.net/estore/",
           "websiteUrl": "https://www.fetnet.net/estore/",
           "scopes": [

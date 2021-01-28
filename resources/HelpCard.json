@@ -12,7 +12,7 @@
                     "items": [
                         {
                             "type": "Image",
-                            "url": "http://demochatops.azurewebsites.net/img/chat-bot.png",
+                            "url": "https://demochatops.azurewebsites.net/img/chat-bot.png",
                             "size": "auto"
                         }
                     ]

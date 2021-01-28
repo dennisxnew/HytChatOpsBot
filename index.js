@@ -11,6 +11,11 @@ const conversationReferences = {};
 // This bot's main dialog.
 const { EmptyBot } = require('./bot');
 const { RootDialog } = require('./dialogs/RootDialog');
+const { ChatOpsLuisRecognizer } = require('./utils/ChatOpsLuisRecognizer');
+
+const path = require('path');
+const ENV_FILE = path.join(__dirname, '.env');
+require('dotenv').config({ path: ENV_FILE });
 
 const memoryStorage = new MemoryStorage();
 const userState = new UserState(memoryStorage);
@@ -18,6 +23,10 @@ const conversationState = new ConversationState(memoryStorage);
 const rootDialog = new RootDialog(userState);
 
 const AlertCard = require("./resources/AlertCard.json");
+
+const { LuisAppId, LuisAPIKey, LuisAPIHostName } = process.env;
+const luisConfig = { applicationId: LuisAppId, endpointKey: LuisAPIKey, endpoint: `https://${ LuisAPIHostName }` };
+const chatOpsLuisRecognizer = new ChatOpsLuisRecognizer(luisConfig);
 
 // Create HTTP server
 const server = restify.createServer();
@@ -53,7 +62,7 @@ adapter.onTurnError = async (context, error) => {
 };
 
 // Create the main dialog.
-const myBot = new EmptyBot(conversationState, userState, rootDialog, conversationReferences);
+const myBot = new EmptyBot(conversationState, userState, rootDialog, conversationReferences, chatOpsLuisRecognizer);
 
 // Listen for incoming requests.
 server.post('/api/messages', (req, res) => {
